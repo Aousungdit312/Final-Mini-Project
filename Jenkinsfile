@@ -10,8 +10,8 @@ pipeline {
             steps {
                 script {
                     // Stop containers if running, then rebuild and start
-                    sh 'docker compose down'
-                    sh 'docker compose up -d --build'
+                    sh 'docker-compose down'
+                    sh 'docker-compose up -d --build'
                 }
             }
         }
