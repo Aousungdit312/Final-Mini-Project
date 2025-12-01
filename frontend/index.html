@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DIT312 Final Project</title>
+    <style> body { font-family: sans-serif; padding: 20px; text-align: center; } </style>
+</head>
+<body>
+    <h1>Welcome to DIT312 Project</h1>
+    <h3>Data from Database:</h3>
+    <ul id="list">Loading...</ul>
+
+    <script>
+        fetch('http://localhost:3000/api/items')
+            .then(res => res.json())
+            .then(data => {
+                const list = document.getElementById('list');
+                list.innerHTML = '';
+                data.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item.name;
+                    list.appendChild(li);
+                });
+            })
+            .catch(err => {
+                document.getElementById('list').textContent = 'Error connecting to API';
+            });
+    </script>
+</body>
+</html>
