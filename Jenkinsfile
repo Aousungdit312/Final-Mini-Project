@@ -9,7 +9,7 @@ pipeline {
         stage('Build & Deploy') {
             steps {
                 script {
-                    // Stop containers if running, then rebuild and start
+                    // ใช้ docker-compose (มีขีด) ตามที่แก้ให้ Mac
                     sh 'docker-compose down'
                     sh 'docker-compose up -d --build'
                 }
@@ -19,8 +19,10 @@ pipeline {
             steps {
                 script {
                     sleep 10
-                    // เช็คว่ามี Container ชื่อ api รันอยู่ไหม (วิธีนี้ชัวร์กว่าบน Mac)
+                    // ใช้ docker ps แทน curl เพื่อเลี่ยงปัญหา Network บน Mac
                     sh 'docker ps | grep api'
                 }
             }
         }
+    }
+}
