@@ -1,28 +1,144 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>DIT312 Final Project</title>
-    <style> body { font-family: sans-serif; padding: 20px; text-align: center; } </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIT312 Project Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        h1 {
+            color: #4a4a4a;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            background-color: #e0f7fa;
+            color: #006064;
+            font-size: 0.9em;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            background: white;
+            border-bottom: 1px solid #eee;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+
+        li:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            color: #764ba2;
+            font-weight: 600;
+        }
+
+        li::before {
+            content: "🔹";
+            margin-right: 10px;
+        }
+
+        .loading {
+            color: #888;
+            font-style: italic;
+        }
+
+        .error {
+            color: #e74c3c;
+            background: #fadbd8;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to DIT312 Project</h1>
-    <h3>Data from Database:</h3>
-    <ul id="list">Loading...</ul>
+
+    <div class="container">
+        <h1>🚀 DIT312 Final Project</h1>
+        <div class="status">CI/CD Pipeline: Active ✅</div>
+        
+        <h3 style="text-align: left; margin-left: 10px; color: #555;">Database Items:</h3>
+        <ul id="list">
+            <div class="loading">Connecting to API...</div>
+        </ul>
+    </div>
 
     <script>
+        // ดึงข้อมูลจาก API
         fetch('http://localhost:3000/api/items')
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) throw new Error("Network response was not ok");
+                return res.json();
+            })
             .then(data => {
                 const list = document.getElementById('list');
-                list.innerHTML = '';
-                data.forEach(item => {
+                list.innerHTML = ''; // Clear loading text
+                
+                if(data.length === 0) {
+                    list.innerHTML = '<div class="loading">No data found in DB</div>';
+                    return;
+                }
+
+                data.forEach((item, index) => {
                     const li = document.createElement('li');
+                    // ใส่ Animation ให้แต่ละ Item เด้งขึ้นมาทีละตัว
+                    li.style.animation = `fadeIn 0.5s ease-in-out ${index * 0.1}s forwards`;
+                    li.style.opacity = '0'; // เริ่มต้นซ่อนไว้ก่อนให้ Animation ทำงาน
                     li.textContent = item.name;
                     list.appendChild(li);
                 });
             })
             .catch(err => {
-                document.getElementById('list').textContent = 'Error connecting to API';
+                console.error(err);
+                document.getElementById('list').innerHTML = `
+                    <div class="error">
+                        ⚠️ <strong>Connection Failed</strong><br>
+                        Cannot reach Backend API at localhost:3000
+                    </div>`;
             });
     </script>
 </body>
